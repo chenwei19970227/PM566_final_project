@@ -1,1 +1,1 @@
-This is my Lab12 sample website. The website can be seen at https://ksiegmund.github.io/PM566-lab12-example/ .
+This is my final project website. The website can be seen at https://chenwei19970227.github.io/PM566_final_project/ .
