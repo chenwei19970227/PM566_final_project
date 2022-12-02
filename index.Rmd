@@ -1,0 +1,171 @@
+---
+title: "PM566 Final Project"
+author: "chen wei"
+output: 
+    html_document:
+        toc: TRUE
+        toc_float: TRUE
+---
+
+<br>
+
+
+
+```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
+
+library(data.table)
+library(tidyverse)
+library(dplyr)
+library(plotly)
+library(DT)
+library(knitr)
+
+# Initialize code chunk options
+opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  eval=TRUE,
+  echo = TRUE,
+  cache = FALSE,
+  fig.width = 7, 
+  fig.align = 'center',
+  fig.asp = 0.618,
+  out.width = "700px",
+  class.source = "code-r")
+```
+
+```{css, echo = FALSE}
+.code-r { /* Code block */
+  font-size: 15px;
+}
+
+.code-r-small { /* Code block */
+  font-size: 10px;
+}
+```
+
+<br>
+
+
+
+```{r load-data, include=FALSE}
+source("PROJECT_COVID_DATA.R")
+```
+## Covid-19 new cases associated with the virus concentration in water other than air
+# abstract
+  During this worldwide pandemic,most of the policy was based on Coronavirus disease can be tranmitted by airbone. There were few evidence shown that coronavirus disease lther tranmitted way, So in this research is to explore whether it have association between the incidence new cases and the concentration of virus in waste water include 19 counties of California. The result shows that the concentration and the new cases shows a similar distribution in both demographical and date dimension. But due to various reason, further explornary analysis is needed.
+  
+# background
+  In late December 2019, people in Wuhan, China began to get sick with a previously unknown pneumonia, marking the beginning of a new infectious disease, later identified as a new type of coronavirus.Soon this infectious disease became a worldwide pademic.
+  The International Committee on the Taxonomy of Viruses selected the name severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2) to represent that the new virus is a sister of the original SARS virus. The disease the virus causes was named coronavirus disease 2019 (COVID-19) by the World Health Organization (WHO).
+  The situation continues to change rapidly. multiple policy such as 6 feet social distancing, facial masks, and quaratine are all based on the SARS-CoV-2 can be transmitted by airbone. but there are few research to see that if SARS-CoV-2 can be transmitted by water. 
+   During the COVID-19 pandemic, it has been used for the detection and quantification of SARS-CoV-2 virus shed into wastewater via feces of infected persons. Wastewater surveillance tracks ""pooled samples"" that reflect the overall disease activity for a community serviced by the wastewater treatment plant (an area known as a ""sewershed""), rather than tracking samples from individual people. 
+   Collecting and analyzing wastewater samples for the overall amount of SARS-CoV-2 viral particles present can help inform public health about the level of viral transmission within a community. Data from wastewater testing are not intended to replace existing COVID-19 surveillance systems, but are meant to complement them. While wastewater surveillance cannot determine the exact number of infected persons in the area being monitored, it can provide the overall trend of virus concentration within that community. 
+   
+# method
+
+# wastewater collection
+  Wastewater from communities is collected by wastewater systems and transported to wastewater treatment plants. Participating utilities collect samples of untreated wastewater or primary sludge. These samples are sent to environmental laboratories for SARS-CoV-2 testing. The testing data, along with the associated utility metadata, are submitted to participating STLT health departments. Health departments submit these data to CDC through the online NWSS DCIPHER portal. CDC analyzes the data in real time and reports results to the health department for use in their COVID-19 response. CDC also summarizes the national data on COVID Data Tracker.
+  SARS-CoV-2 RNA is quantified using PCR technology: reverse transcription quantitative PCR (RT-qPCR), reverse transcription digital PCR (RT-dPCR), or reverse transcription droplet digital PCR (RT-ddPCR). Laboratory staff should convert concentration estimates produced by PCR software (in units of copies per reaction or copies per reaction volume) to virus concentrations per volume of unconcentrated wastewater or sludge sample. This conversion accounts for the volume of template used in the PCR (and reverse transcriptase reaction if separate), the concentration factor of nucleic acid extraction, and sample concentration processes.
+  the data was download as .csv from the website
+  https://data.ca.gov/dataset/covid-19-wastewater-surveillance-data-california
+  
+  
+```{r include=FALSE}
+# Initialize code chunk options
+opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  eval=TRUE,
+  echo = TRUE,
+  cache = FALSE,
+  fig.width = 7, 
+  fig.align = 'center',
+  fig.asp = 0.618,
+  out.width = "700px")
+```
+
+# California case
+  The "Total Tests" and "Positive Tests" columns show totals based on the collection date. There is a lag between when a specimen is collected and when it is reported in this dataset. As a result, the most recent dates on the table will temporarily show NONE in the "Total Tests" and "Positive Tests" columns. This should not be interpreted as no tests being conducted on these dates. Instead, these values will be updated with the number of tests conducted as data is received.
+    When comparing to the state dashboard, the dashboard numbers will correspond to the "Reported" columns in this table. Also note that the dashboard displays data that is one day prior to today's date.
+https://data.ca.gov/dataset/covid-19-time-series-metrics-by-county-and-state
+
+# software using
+  the dataset was downloaded as .csv form. Excel was using for slightly adjusted few columns. Most of the data analyzing, figure generating, and data wrangling was completed by R version 4.2.1 (2022-06-23 ucrt).
+  
+# statistic anlystic
+  First download and then read in with data.from the resource website seprately(code and output can be seen on Appendix).The data reported the incidence case and cummulative case include 59 county from california started from 2020-2-1, the last updated is 2022-10-11. There are 60085 observation based on date,985 observation in each 59 county in the whole california, which is much bigger than the data download from waterwaste website.
+   The data downloaded from the waterwaste website contains 12773 observation started from 2021-1-1, last updated is2022-9-9 based on the data include only 21 county. After  an basic explornary analysis, 985 observation from case data and 14 observation from waterwaste data was removed.
+   
+
+
+```{r include=FALSE}
+source("PROJECT_COVID_DATA.R")
+p1_scatter <- case_final %>% 
+  plot_ly(x = ~date, y = ~cases,
+          type = 'scatter', mode = 'markers', color = ~county_names,
+          size = ~cases, sizes = c(5, 70), marker = list(sizemode='diameter', opacity=0.5),
+          hoverinfo = 'text',
+          text = ~paste( paste(county_names, ":", sep=""), paste(" date: ", date, sep="") , paste(" cases: ",
+                        cases, sep=""), sep = "<br>")) %>%
+  layout(title = "population from California new caes through 2021 to 2022 ",
+                  yaxis = list(title = "cases"), xaxis = list(title = "date"),
+         hovermode = "compare")
+# filter out "District of Columbia"
+p2_scatter <- waterwaste %>% 
+  plot_ly(x = ~date, y = ~pcr_target_avg_conc,
+          type = 'scatter', mode = 'markers', color = ~county_names,
+          size = ~pcr_target_avg_conc, sizes = c(5, 70), marker = list(sizemode='diameter', opacity=0.5),
+          hoverinfo = 'text',
+          text = ~paste( paste(county_names, ":", sep=""), paste(" date: ", date, sep="") , paste(" pcr concentration: ",
+                        pcr_target_avg_conc, sep=""), sep = "<br>")) %>%
+  layout(title = "wastewater concentration in California from 2021 to 2022",
+                  yaxis = list(title = "virus expression number"), xaxis = list(title = "date"),
+         hovermode = "compare")
+```
+
+## Showcasing plots {.tabset}
+
+### Tab 1
+
+```{r echo=FALSE}
+p1_scatter
+```
+
+### Tab 2
+
+```{r echo=FALSE}
+p2_scatter
+```
+   
+### Tab 3
+```{r echo=FALSE}
+data_avg
+```
+### Tab 4
+```{r echo=FALSE}
+county_avg
+```
+# result   
+   for easier comparision and lining up, only shared the same county names and date between 2 data set. After a couple filter and selection, only 15181 observation from case dataset was remained  abd 12759 observation from waterwaste was remained. 
+   Based on the uneven observation between each counties and date, the mean of new cases(unit:people) and the pcr_target concentration(unit:copied/L) grouped by each date and counties. This would be the 12759 observations basic data which would be analyzed in the county and date dimension . 
+   In this data started at 2020-3-19, last updated on 2022-10-18. include 19 big counti around California, we can see that the new cases has a relatively positive trend when the date increased, and the pcr concentration in the waterwaste was also increased. (full data can be seen on appendix.) 
+   Then the dataset was calculated grouped by county first. In Figure 1, the map of California. Figure 1 shown a comparison distribution map of pcr_concentration mean of the virus and the new cases coming out in thie 2 years dataset. In Figure 1, Tthe pcr concentration and new cases are all shows a high number(lighther color) around Los Anglese area.
+      Figure 2 shows a group of lineplot of time series vs pcr_concentration and new cases. We can see that there is all have a peak on July, 2020 in both variable, and a peak on the Janurary 2022.
+   based on this two dimension, there is an similar association between pcr concentration and also the mean. 
+   
+# discussion
+   even though there has a relatively obvious shared association between this 2 viriable. But there is still limitations.
+   eventhough the concentration of virus in the wastewater are a realtively strong evidence, but there based on the water survilence resource shown that there is still limitation on detection and quantification for using it as a dataset.
+   It is not possible to reliably and accurately predict the total number of infected individals in a community based on sewage surveillance alone.Wastewater surveillance will not represent homes on septic-based systems.Community-level wastewater surveillance at a wastewater treatment plant will not represent communities or facilities served by decentralized systems, such as prisons, universities, or hospitals that treat their own waste.Low levels of infection in a community may not be captured by sewage surveillance if the quantity of SARS-CoV-2 falls below the limit of detection for lab analysis.
+   except for the data itself, the limit area of dataset also affect the accurately.There is only 19 counties and 2 years of unconescutive data, which is limited and easily influenced by other factors. 
+# conclusion
+  based on the Figure shown above, there is a similar association between the pcr-concentration from wastewater and also the new daily cases. pcr-concentration from wastewater may can be used as a predictor of covid_19 but still further research is needed. 
+   
+# resource
+1.  https://data.ca.gov/dataset/covid-19-wastewater-surveillance-data-california
+2.   https://data.ca.gov/dataset/covid-19-time-series-metrics-by-county-and-state
+3.   https://transition.fcc.gov/oet/info/maps/census/fips/fips.txt
+4.   https://www.latlong.net/country/united-states-236.html
+5.   https://www.cdph.ca.gov/Programs/CID/DCDC/Pages/COVID-19/Wastewater-Surveillance.aspx
+## {-}
