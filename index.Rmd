@@ -156,6 +156,8 @@ county_avg
    based on this two dimension, there is an similar association between pcr concentration and also the mean. 
    
 # discussion
+
+# reflection
    even though there has a relatively obvious shared association between this 2 viriable. But there is still limitations.
    eventhough the concentration of virus in the wastewater are a realtively strong evidence, but there based on the water survilence resource shown that there is still limitation on detection and quantification for using it as a dataset.
    It is not possible to reliably and accurately predict the total number of infected individals in a community based on sewage surveillance alone.Wastewater surveillance will not represent homes on septic-based systems.Community-level wastewater surveillance at a wastewater treatment plant will not represent communities or facilities served by decentralized systems, such as prisons, universities, or hospitals that treat their own waste.Low levels of infection in a community may not be captured by sewage surveillance if the quantity of SARS-CoV-2 falls below the limit of detection for lab analysis.
