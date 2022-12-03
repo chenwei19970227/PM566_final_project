@@ -144,6 +144,7 @@ data_avg
 ```
 ### Tab 4
 ```{r echo=FALSE}
+#MAKE IT INTERACTIVE
 county_avg
 ```
 # result   
