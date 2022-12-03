@@ -7,6 +7,8 @@ navbar:
       href: index.html
     - text: "Lab 12"
       href: 12-lab.html
+    - text: "homework5"
+      href: homework05.html
   right:
     - icon: fa-github fa-lg
       href: https://github.com/ksiegmund/PM566-lab12-example

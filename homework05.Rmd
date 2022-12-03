@@ -1,0 +1,127 @@
+---
+title: "assingment 05"
+author: "chen wei"
+date: "2022-12-02"
+output: 
+    html_document:
+        toc: TRUE
+        toc_float: TRUE
+---
+## R Markdown
+```{r setup, message=FALSE, echo=FALSE, warning=FALSE}
+
+library(data.table)
+library(tidyverse)
+library(dplyr)
+library(plotly)
+library(DT)
+library(knitr)
+library(leaflet)
+
+# Initialize code chunk options
+opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  eval=TRUE,
+  echo = TRUE,
+  cache = FALSE,
+  fig.width = 7, 
+  fig.align = 'center',
+  fig.asp = 0.618,
+  out.width = "700px",
+  class.source = "code-r")
+```
+
+```{css, echo = FALSE}
+.code-r { /* Code block */
+  font-size: 15px;
+}
+
+.code-r-small { /* Code block */
+  font-size: 10px;
+}
+```
+
+<br>
+
+
+
+```{r load-data, include=FALSE}
+source("PROJECT_COVID_DATA.R")
+```
+
+```{r include=FALSE}
+# Initialize code chunk options
+opts_chunk$set(
+  warning = FALSE,
+  message = FALSE,
+  eval=TRUE,
+  echo = TRUE,
+  cache = FALSE,
+  fig.width = 7, 
+  fig.align = 'center',
+  fig.asp = 0.618,
+  out.width = "700px")
+```
+
+```{r include=FALSE}
+source("PROJECT_COVID_DATA.R")
+p1_scatter <- case_final %>% 
+  plot_ly(x = ~date, y = ~cases,
+          type = 'scatter', mode = 'markers', color = ~county_names,
+          size = ~cases, sizes = c(5, 70), marker = list(sizemode='diameter', opacity=0.5),
+          hoverinfo = 'text',
+          text = ~paste( paste(county_names, ":", sep=""), paste(" date: ", date, sep="") , paste(" cases: ",
+                        cases, sep=""), sep = "<br>")) %>%
+  layout(title = "population from California new caes through 2021 to 2022 ",
+                  yaxis = list(title = "cases"), xaxis = list(title = "date"),
+         hovermode = "compare")
+# filter out "District of Columbia"
+p2_scatter <- waterwaste %>% 
+  plot_ly(x = ~date, y = ~pcr_target_avg_conc,
+          type = 'scatter', mode = 'markers', color = ~county_names,
+          size = ~pcr_target_avg_conc, sizes = c(5, 70), marker = list(sizemode='diameter', opacity=0.5),
+          hoverinfo = 'text',
+          text = ~paste( paste(county_names, ":", sep=""), paste(" date: ", date, sep="") , paste(" pcr concentration: ",
+                        pcr_target_avg_conc, sep=""), sep = "<br>")) %>%
+  layout(title = "wastewater concentration in California from 2021 to 2022",
+                  yaxis = list(title = "virus expression number"), xaxis = list(title = "date"),
+         hovermode = "compare")
+```
+# 1.GRAPH
+```{r echo=FALSE}
+p1_scatter
+```
+```{r echo=FALSE}
+p2_scatter
+```
+
+# 2.LINEGRAPH
+
+```{r}
+g1 = plot_ly(data_avg, x = ~date, y = ~new_case_mean, color = ~county_names, type = "scatter", mode = "lines")
+g2 = ggplot(data_avg, aes(x = date, y = pcr_target_mean, color = county_names)) +
+          geom_line() + geom_point(size = .5, alpha = 0.5)
+g2_plotly <- ggplotly(g2)
+subplot(g1, g2_plotly)
+```
+# 3.BARGRAPH 
+
+```{r}
+
+
+p <- ggplot(county_avg, aes(x=new_case_mean, 
+                     y=pcr_target_mean, 
+                     color=county_names)) +
+  geom_point(size=3) +
+  labs(x = "new cases in each county",
+       y = "virus copy number in wastewater",
+       color = "county names in California") +
+  theme_bw()
+
+ggplotly(p)
+```
+
+
+   
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
