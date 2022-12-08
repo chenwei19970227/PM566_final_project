@@ -51,9 +51,12 @@ opts_chunk$set(
 ```{r load-data, include=FALSE}
 source("PROJECT_COVID_DATA.R")
 ```
-## Covid-19 new cases associated with the virus concentration in water other than air
+## Covid-19 new cases can be prediced with the virus concentration in wastewater
 # abstract
-  During this worldwide pandemic,most of the policy was based on Coronavirus disease can be tranmitted by airbone. There were few evidence shown that coronavirus disease lther tranmitted way, So in this research is to explore whether it have association between the incidence new cases and the concentration of virus in waste water include 19 counties of California. The result shows that the concentration and the new cases shows a similar distribution in both demographical and date dimension. But due to various reason, further explornary analysis is needed.
+  During this worldwide pandemic,most of the policy was based on Coronavirus disease can be transmitted by airborne, the incidence cases can be control by strategies of block the airborne such as wearing facial masks, keeping a social distance, quarantine.etc. Prevention and prediction is necessary but the virus concentration in the air is unstable and impossible to measure. Based on the data collecting on the official website,there is an finding reminds me to create an assumption and think about this question in a different angles: Covid_19 virus can also survived in water, and also the monitoring wastewater for the presence of infectious pathogens has a history of use in public health. During the COVID-19 pandemic, it has been used for the detection and quantification of SARS-CoV-2 virus shed into wastewater via feces of infected persons.so I hypothesised that concentration of the  Coronavirus in wastewater can be used as a predictor as incident case numbers of affected people. as the result, there is some evidence shown that the concentration of virus in the wastewater share a similar model with the incidence number in 19 counties in California, But due to various reason, further explornary analysis is needed.
+  
+# Research Question
+Can we predict incident case numbers from studies of the virus in the wastewater?  
   
 # background
   In late December 2019, people in Wuhan, China began to get sick with a previously unknown pneumonia, marking the beginning of a new infectious disease, later identified as a new type of coronavirus.Soon this infectious disease became a worldwide pademic.
@@ -84,6 +87,8 @@ opts_chunk$set(
   fig.asp = 0.618,
   out.width = "700px")
 ```
+# Data analysis
+  To interpret SARS-CoV-2 wastewater measurements, polymerase chain reaction (PCR)-based measurements must be converted to sample concentrations and adjusted for testing and wastewater factors, which may change from sample to sample within a wastewater system and between wastewater systems. PCR measurements must be converted to wastewater concentrations prior to submitting data to NWSS. Viral recovery and fecal normalization will be evaluated by the NWSS analytic engine as described below.
 
 # California case
   The "Total Tests" and "Positive Tests" columns show totals based on the collection date. There is a lag between when a specimen is collected and when it is reported in this dataset. As a result, the most recent dates on the table will temporarily show NONE in the "Total Tests" and "Positive Tests" columns. This should not be interpreted as no tests being conducted on these dates. Instead, these values will be updated with the number of tests conducted as data is received.
@@ -93,10 +98,13 @@ https://data.ca.gov/dataset/covid-19-time-series-metrics-by-county-and-state
 # software using
   the dataset was downloaded as .csv form. Excel was using for slightly adjusted few columns. Most of the data analyzing, figure generating, and data wrangling was completed by R version 4.2.1 (2022-06-23 ucrt).
   
-# statistic anlystic
-  First download and then read in with data.from the resource website seprately(code and output can be seen on Appendix).The data reported the incidence case and cummulative case include 59 county from california started from 2020-2-1, the last updated is 2022-10-11. There are 60085 observation based on date,985 observation in each 59 county in the whole california, which is much bigger than the data download from waterwaste website.
-   The data downloaded from the waterwaste website contains 12773 observation started from 2021-1-1, last updated is2022-9-9 based on the data include only 21 county. After  an basic explornary analysis, 985 observation from case data and 14 observation from waterwaste data was removed.
+# statistic analysis
+  First download and then read in with data from the resource website seprately.The data reported the incidence case and cummulative case include 59 county from california started from 2020-2-1, the last updated is 2022-10-11. There are 60085 observation based on date,985 observation in each 59 county in the whole california, which is much bigger than the data download from waterwaste website.
+   The data downloaded from the waterwaste website contains 12773 observation started from 2020-3-19, last updated is2022-10-18 based on the data include only 21 county. After  an basic explornary analysis, 985 observation from case data and 14 observation from waterwaste data was removed.also, the new cases column marked as "NA" is also removed from the case data.
+   after the first step, then lining with the two data set, all case reports prior to start of wastewater reporting was removed.keeping the observations those wastewater and incidence case shared the same county and date at the same time. Finally, there are 15181 observation in the case data was filtered out and applied into statistical analysis. 
    
+# exploratory data analysis
+  First, i used the 15181 cases observation and 12759 waterwaste observation. i created two scatterplot seprately based on the case and waterwaste through the date so i can compare them each other.  
 
 
 ```{r include=FALSE}
@@ -124,7 +132,7 @@ p2_scatter <- waterwaste %>%
          hovermode = "compare")
 ```
 
-## Showcasing plots {.tabset}
+## Showcasing plots 
 
 ### Tab 1
 
@@ -138,15 +146,118 @@ p1_scatter
 p2_scatter
 ```
    
-### Tab 3
+   based on the two figure shown above, based on the relatively raw data. we can see that the incidence case and wastewater shown a relatively similar pattern:
+   1.Los Anglese, Orange County and San Diego share a highest incidence number,which is the most outlines side. Comparing with the wastewater scatterplot, the Los Anglese and Orange County also have the highest virus concentration in wastewater.
+   2.There are two peak according to the date. First one is around Jan 2021. Los Angeles's wastewater virus concentration and incidence cases are all reached to a peak. Second one is that around Jan 2022, the incidence number in Los angeles reached to another peak, but in the same time, the orange counties virus concnentration in wastewater reached to peak.
+## TABLE
+  in a exploranary analysis, we can see a similar pattern between the wastewater virus concnentration and the incidence case number according to there date. But due to the uneven obervation in different county, and uneven interval date, the two figure above is not provide enough conving evidence. 
+  So due to the question above, i created 2 summarized table, TABLE1 is based on the average of that waterwaste concentration and incidence number based on counties and date in the same time from 20203-19 to 2022-10-11. TABLE 2 is based on the average of that waterwaste concentration and incidence number based on counties and mark down their latitude and longtitude. 
+### Tab 1
 ```{r echo=FALSE}
-data_avg
+data_avg<-data_avg[, new_case_mean   := fifelse(data_avg$new_case_mean == "", NA_integer_, new_case_mean)]
+data_avg <- data_avg[!is.na(new_case_mean)] 
+
+datatable(data_avg)
 ```
-### Tab 4
+### Tab 2
 ```{r echo=FALSE}
 #MAKE IT INTERACTIVE
-county_avg
+datatable(county_avg)
 ```
+## LINE PLOT and SCATTERPLOT BASED ON TABLE
+Based on the TABLE 1 
+### TAB 1
+```{r echo=FALSE}
+g1 = plot_ly(data_avg, x = ~date, y = ~new_case_mean, color = ~county_names, type = "scatter", mode = "lines")
+g1_plotly <- ggplotly(g1)
+g2 = ggplot(data_avg, aes(x = date, y = pcr_target_mean, color = county_names)) +
+          geom_line() + geom_point(size = .5, alpha = 0.5)
+g2_plotly <- ggplotly(g2)
+subplot(g1, g2_plotly)
+```
+
+### TAB2
+```{r echo=FALSE}
+lm_eqn <- function(data_avg){
+    m <- lm(new_case_mean ~ pcr_target_mean, data_avg);
+    eq <- substitute(italic(y) == a + b %.% italic(x)*","~~italic(r)^2~"="~r2, 
+         list(a = format(unname(coef(m)[1]), digits = 2),
+              b = format(unname(coef(m)[2]), digits = 2),
+             r2 = format(summary(m)$r.squared, digits = 3)))
+    as.character(as.expression(eq));
+}
+p <- ggplot(data_avg, aes(x=pcr_target_mean, 
+                     y=new_case_mean, 
+                     color=county_names)) +
+  geom_point(size=3) +
+  labs(x = "new cases in each county",
+       y = "virus copy number in wastewater",
+       color = "county names in California") +
+  theme_bw()+geom_text(x = 50000000, y = 60000, label = lm_eqn(data_avg), parse = TRUE)
+ggplotly(p)
+
+```
+    Based on the first lineplot,even though averaging out the date and counies, there is still two peak in the whole obervation around Jan 2021,Jan 2022 in Los Angeleswhich is similar with the explonary analysis. but when i was trying to find out the association between the virus concentration in wastewater and incidence case by scatterplot, the r-sqaure is weak.
+    
+    in the last part, i average out the observation only based on counties and use a leaflet to find out the association
+## LEAFLET
+### TAB1
+```{r include=FALSE}
+library(leaflet)
+pcr.pal <- colorNumeric(c('darkgreen','goldenrod'), domain=county_avg$pcr_target_mean)
+pcr.pal
+```                                                           
+```{r echo=FALSE}
+virusmap <- leaflet(county_avg) %>%
+# The looks of the Map
+addProviderTiles('CartoDB.Positron') %>%
+# Some circles
+addCircles(
+lat = ~lat, lng=~lon,
+# HERE IS OUR PAL!
+label = ~paste0(round(pcr_target_mean,2), 'copies/L'), color = ~ pcr.pal(pcr_target_mean),
+opacity = 1, fillOpacity = 1, radius = 500
+) %>%
+# And a pretty legend
+addLegend('bottomleft', pal=pcr.pal, values=county_avg$pcr_target_mean,
+title='SARS-CoV-2 concentration, copies/L', opacity=1)
+virusmap
+
+```
+### TAB2
+```{r echo=FALSE}
+case.pal <- colorNumeric(c('darkgreen','goldenrod'), domain=county_avg$new_case_mean)
+case.pal
+casemap <- leaflet(county_avg) %>%
+# The looks of the Map
+addProviderTiles('CartoDB.Positron') %>%
+# Some circles
+addCircles(
+lat = ~lat, lng=~lon,
+# HERE IS OUR PAL!
+label = ~paste0(round(new_case_mean,2), 'cases'), color = ~ case.pal(new_case_mean),
+opacity = 1, fillOpacity = 1, radius = 500
+) %>%
+# And a pretty legend
+addLegend('bottomleft', pal=case.pal, values=county_avg$new_case_mean,
+title='new Covid-19 cases, observation', opacity=1)
+casemap
+```
+### TAB 3
+
+```{r echo=FALSE}
+p3 <- ggplot(county_avg, aes(x=new_case_mean, 
+                     y=pcr_target_mean, 
+                     color=county_names)) +
+  geom_point(size=3) +
+  labs(x = "new cases in each county",
+       y = "virus copy number in wastewater",
+       color = "county names in California") +
+  theme_bw()
+
+ggplotly(p3)
+```
+from the date, there is a problem that the virus has a periodly activity. it may also explain the peak around the January in 2021 and 2022, so i averaged out each counties. based on the figure above, we can see from the leafplot that the virus and incidence case have a similar distribution,yellow on the Los Angleles part. and also the scatterplot shows a realtively positively distribution.
 # result   
    for easier comparision and lining up, only shared the same county names and date between 2 data set. After a couple filter and selection, only 15181 observation from case dataset was remained  abd 12759 observation from waterwaste was remained. 
    Based on the uneven observation between each counties and date, the mean of new cases(unit:people) and the pcr_target concentration(unit:copied/L) grouped by each date and counties. This would be the 12759 observations basic data which would be analyzed in the county and date dimension . 

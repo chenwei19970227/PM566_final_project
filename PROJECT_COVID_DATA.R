@@ -59,10 +59,14 @@ waterwaste$date<-as.Date(waterwaste$date, "%m/%d/%Y")
 case$date<-as.Date(case$date, "%m/%d/%Y")
 res1<-semi_join(case, waterwaste, by = "county_names")
 case_final<-semi_join(res1,waterwaste,by="date")
+case_final<-case_final[, cases   := fifelse(case_final$cases == "", NA_integer_, cases)]
+case_final[!is.na(cases)]
+
 # calculate the mean
 
 #county name
 #date
+
 data_avg1<-
   case_final[ , .(
     new_case_mean      =mean(cases, na.rm=T),
@@ -71,9 +75,7 @@ data_avg1<-
 data_avg1
 data_avg2<-
   waterwaste[ , .(
-    pcr_target_mean      =mean(pcr_target_avg_conc, na.rm=T),
-    lng= Sample_Location_Longitude,
-    lat=Sample_Location_Latitude
+    pcr_target_mean      =mean(pcr_target_avg_conc, na.rm=T)
   )
   ,by = c("date", "county_names")]
 data_avg2
@@ -89,6 +91,8 @@ data_avg<-merge(
   all.x = FALSE,      
   all.y = TRUE
 ) 
+data_avg<-data_avg[, new_case_mean   := fifelse(data_avg$new_case_mean == "", NA_integer_, new_case_mean)]
+data_avg[!is.na(new_case_mean)]
 data_avg
 
 
@@ -102,6 +106,7 @@ county_avg1
 county_avg2<-
   waterwaste[ , .(
     pcr_target_mean      =mean(pcr_target_avg_conc, na.rm=T)
+    
   )
   ,by = 'county_names']
 county_avg2$lat<-c(39.9927, 35.4937, 33.0114, 37.8534, 37.6017, 36.7378,34.0522,39.0840,33.7175,34.1083,32.7157,37.7749,37.5091,37.2010,37.4337,37.3337,38.7646,38.4747,34.3705)
@@ -120,6 +125,7 @@ county_avg<-merge(
   all.y = TRUE
 ) 
 county_avg
+
 
 
 

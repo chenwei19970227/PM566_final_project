@@ -1,7 +1,7 @@
-name: "my-website"
+name: "PM566 Final Project- can we predict the covid-19 incidence cases by studying virus copies in wastewater"
 output_dir: "."
 navbar:
-  title: "PM566 Final Project"
+  title: "PM566 Final Project- can we predict the covid-19 incidence cases by studying virus copies in wastewater"
   left:
     - text: "Home"
       href: index.html
