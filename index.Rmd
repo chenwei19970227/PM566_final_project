@@ -185,20 +185,13 @@ subplot(g1, g2_plotly)
 ```
 
 
-  on the first lineplot,even though averaging out the date and counies, there is still two peak in the whole obervation around Jan 2021,Jan 2022 in Los Angeleswhich is similar with the explonary analysis. but when i was trying to find out the association between the virus concentration in wastewater and incidence case by scatterplot, the r-sqaure is weak.
+  on the first lineplot,even though averaging out the date and counies, there is still two peak in the whole obervation around Jan 2021,Jan 2022 in Los Angeleswhich is similar with the explonary analysis. 
     
-    in the last part, i average out the observation only based on counties and use a leaflet to find out the association
 ## Scatterplot {.tabset}
 ### TAB 1
 
 ```{r echo=FALSE}
-library(ggpubr)
-p3a<-ggplot(county_avg,aes(x = new_case_mean, y = pcr_target_mean, 
-                     color=county_names)) + 
-  geom_point(size=2,alpha=0.5) + 
-  geom_smooth(method = "lm", se=FALSE) +
-  stat_regline_equation(label.y = 400, aes(label = ..eq.label..)) +
-  stat_regline_equation(label.y = 350, aes(label = ..rr.label..))
+
 
 p3 <- ggplot(county_avg, aes(x=new_case_mean, 
                      y=pcr_target_mean, 
@@ -210,7 +203,6 @@ p3 <- ggplot(county_avg, aes(x=new_case_mean,
   theme_bw()
 
 ggplotly(p3)
-ggplotly(p3a)
 ```
 ## {-}
 from the date, there is a problem that the virus has a periodly activity. it may also explain the peak around the January in 2021 and 2022, so i averaged out each counties. based on the figure above, we can see from the leafplot that the virus and incidence case have a similar distribution,yellow on the Los Angleles part. and also the scatterplot shows a realtively positively distribution.
@@ -233,7 +225,9 @@ from the date, there is a problem that the virus has a periodly activity. it may
   based on the Figure shown above, there is a similar association between the pcr-concentration from wastewater and also the new daily cases. pcr-concentration from wastewater may can be used as a predictor of covid_19 but still further research is needed. 
 
 # Dowload place
-  click downgit
+  click linkbelow
+  https://minhaskamal.github.io/DownGit/#/home?url=https://github.com/chenwei19970227/PM566_final_project/blob/main/index.pdf
+  
    
 # resource
 1.  https://data.ca.gov/dataset/covid-19-wastewater-surveillance-data-california
